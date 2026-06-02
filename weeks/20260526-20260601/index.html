@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOK JP 社群週報 | 5/26 - 6/1</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-subtle: #f9fafb;
+    --border: #e5e7eb;
+    --border-light: #f3f4f6;
+    --text: #111827;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --accent-blue: #3b82f6;
+    --accent-red: #ef4444;
+    --accent-green: #22c55e;
+    --accent-amber: #f59e0b;
+    --accent-purple: #8b5cf6;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Week Navigation Bar */
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .week-nav a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .week-nav a:hover { text-decoration: underline; }
+  .week-nav-home { margin-right: auto; }
+  .week-nav-title {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .week-nav-prev, .week-nav-next { white-space: nowrap; }
+  .week-nav-next { margin-left: 8px; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-subtle);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ===== Header ===== */
+  header {
+    margin-bottom: 32px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  header .period {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+  header .period span {
+    display: inline-block;
+    background: var(--border-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+    margin-left: 6px;
+  }
+
+  /* ===== Section ===== */
+  .section {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-header .platform-icon {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .section-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .section-body {
+    padding: 16px 20px 20px;
+  }
+
+  /* ===== KPI Grid ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    padding: 12px 14px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    position: relative;
+  }
+  .kpi-card .label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .kpi-card .value {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-card .change {
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .kpi-card .change.up { color: var(--accent-red); }
+  .kpi-card .change.down { color: var(--accent-green); }
+  .kpi-card .change.neutral { color: var(--text-tertiary); }
+  .kpi-card .change.negative-up { color: var(--accent-red); }
+
+  /* ===== Analysis Block ===== */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .analysis-card {
+    padding: 14px 16px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    position: relative;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+  .analysis-card.full-width {
+    grid-column: 1 / -1;
+  }
+  /* Card toolbar */
+  .card-toolbar {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .analysis-card:hover .card-toolbar { opacity: 1; }
+  .card-tool-btn {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s;
+  }
+  .card-edit-btn { color: var(--text-tertiary); background: transparent; }
+  .card-edit-btn:hover { background: #eff6ff; color: var(--accent-blue); }
+  .card-del-btn { color: var(--text-tertiary); background: transparent; }
+  .card-del-btn:hover { background: #fef2f2; color: var(--accent-red); }
+  /* Edit mode */
+  .analysis-card.editing { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59,130,246,0.08); }
+  .analysis-card.editing .card-body-text { display: none; }
+  .analysis-card .edit-area {
+    display: none;
+  }
+  .analysis-card.editing .edit-area { display: block; }
+  .analysis-card .edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    font-size: 13px;
+    font-family: var(--font);
+    line-height: 1.7;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    resize: vertical;
+    outline: none;
+    color: var(--text);
+  }
+  .analysis-card .edit-area textarea:focus { border-color: var(--accent-blue); }
+  .card-edit-actions {
+    margin-top: 6px;
+    display: flex; justify-content: flex-end; gap: 6px;
+  }
+  .card-edit-actions button {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid;
+    font-family: var(--font);
+  }
+  .btn-save { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+  .btn-save:hover { opacity: 0.85; }
+  .btn-cancel { background: transparent; color: var(--text-secondary); border-color: var(--border); }
+  .btn-cancel:hover { background: var(--bg-subtle); }
+  /* Deleted state */
+  .analysis-card.deleted {
+    display: none !important;
+  }
+  .analysis-card .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+  }
+  .analysis-card .tag.why { background: #fef3c7; color: #92400e; }
+  .analysis-card .tag.so { background: #dbeafe; color: #1e40af; }
+  .analysis-card .tag.key { background: #fce7f3; color: #9d174d; }
+  .analysis-card .tag.signal { background: #e0e7ff; color: #3730a3; }
+  .analysis-card .tag.risk { background: #fee2e2; color: #991b1b; }
+  .analysis-card .tag.prediction { background: #ecfdf5; color: #065f46; }
+  .analysis-card strong {
+    color: var(--text);
+  }
+  .analysis-card .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ===== Chart Container ===== */
+  .chart-box {
+    margin-top: 16px;
+    position: relative;
+  }
+  .chart-box canvas {
+    max-height: 220px;
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  /* ===== TOP Content List ===== */
+  .top-list {
+    list-style: none;
+  }
+  .top-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+  }
+  .top-item:last-child { border-bottom: none; }
+  .top-item .rank {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--border-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--text-secondary);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .top-item:nth-child(1) .rank { background: #fef3c7; color: #92400e; }
+  .top-item:nth-child(2) .rank { background: #f3f4f6; color: #4b5563; }
+  .top-item:nth-child(3) .rank { background: #ffedd5; color: #9a3412; }
+  .top-item .content {
+    flex: 1;
+    min-width: 0;
+  }
+  .top-item .title-text {
+    font-weight: 500;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .top-item .meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .top-item .metric {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  /* ===== Placeholder ===== */
+  .placeholder-section {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 13px;
+  }
+  .placeholder-section .placeholder-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== Memo System ===== */
+  .memo-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-tertiary);
+    font-size: 11px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .kpi-card:hover .memo-toggle,
+  .analysis-card:hover .memo-toggle,
+  .chart-box:hover .memo-toggle,
+  .top-item:hover .memo-toggle {
+    opacity: 0.6;
+  }
+  .memo-toggle:hover { opacity: 1 !important; background: var(--bg-subtle); }
+  .memo-toggle.has-memo {
+    opacity: 1;
+    background: #fef3c7;
+    border-color: #f59e0b;
+    color: #92400e;
+  }
+  .memo-box {
+    display: none;
+    margin-top: 8px;
+    position: relative;
+  }
+  .memo-box.open { display: block; }
+  .memo-box textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-family: var(--font);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    resize: vertical;
+    outline: none;
+    color: var(--text);
+  }
+  .memo-box textarea:focus { border-color: var(--accent-blue); }
+  .memo-preview {
+    font-size: 11px;
+    color: var(--accent-amber);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ===== Source Label ===== */
+  .source-label {
+    text-align: right;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    padding: 24px 0 0;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .container { padding: 20px 16px 48px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .analysis-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<!-- Week Navigation Bar -->
+<nav class="week-nav">
+  <a href="../../" class="week-nav-home">🏠 周报首页</a>
+  <span class="week-nav-title">5/26 — 6/1 周报</span>
+  <span class="week-nav-prev" style="color:var(--text-tertiary)">← 无</span>
+  <span class="week-nav-next" style="color:var(--text-tertiary)">下一周 →</span>
+</nav>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <h1>HOK JP 社群週報</h1>
+    <div class="period">报告周期 <span>5/26 - 6/1</span> · 环比基准 <span>5/20 - 5/25</span></div>
+  </header>
+
+  <!-- ===== X ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#000">𝕏</div>
+      <h2>X (@hok_jp)</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card" data-memo-key="x-imp">
+          <div class="label">曝光量</div>
+          <div class="value">103.8K</div>
+          <div class="change down">▼ 14% <small>vs 120.4K</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-eng">
+          <div class="label">总互动</div>
+          <div class="value">2,057</div>
+          <div class="change down">▼ 50% <small>vs 4,099</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-engrate">
+          <div class="label">互动率</div>
+          <div class="value">1.98%</div>
+          <div class="change down">▼ 1.42pp <small>vs 3.40%</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-follows">
+          <div class="label">新增关注</div>
+          <div class="value">+78</div>
+          <div class="change down">▼ 81% <small>vs +418</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-reposts">
+          <div class="label">转发</div>
+          <div class="value">198</div>
+          <div class="change down">▼ 87% <small>vs 1,542</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-likes">
+          <div class="label">点赞</div>
+          <div class="value">857</div>
+          <div class="change down">▼ 19% <small>vs 1,058</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-posts">
+          <div class="label">发帖数</div>
+          <div class="value">21</div>
+          <div class="change neutral">→ 0% <small>vs 21</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="x-avg-impressions">
+          <div class="label">平均单条曝光</div>
+          <div class="value">4,940</div>
+          <div class="change down">▼ 14% <small>vs 5,733</small></div>
+        </div>
+      </div>
+
+      <!-- 归因 + 内容类型效率（并排） -->
+      <div class="analysis-grid" style="margin-top:16px">
+        <div class="analysis-card" data-memo-key="x-why">
+          <span class="tag why">归因</span><br>
+          <strong>・本周并非内容质量下滑，而是从上周异常峰值回归正常水位</strong><br>
+          上周受到「Custom Party Vol.66 直播」和「白龍皮肤告知」双节点拉动，形成短期高峰；本周数据回落主要是峰值消退后的自然结果。<br><br>
+          <strong>・本周转发量虽然低于上周，但传播结构更健康</strong><br>
+          本周 198 转中，自推帖子贡献 144 转（上周108），占比 72.7%，说明主要转发来自官方内容本身；相比上周大量依赖外部 Quote RT，本周传播来源更稳定。<br>
+          <small style="color:#6b7280">⚠️ 外部转发 = overview账号级总转发 − content自推帖转发合计；CSV无法定位具体外部帖子来源（需X API查Quote RT）</small>
+        </div>
+        <div class="analysis-card" data-memo-key="x-content-type">
+          <span class="tag key">内容类型效率</span><br>
+          <strong>短片型 > 纯图文</strong>：孔明精彩操作 6,282 曝光 + 点赞率 0.68%，高于同期纯图文预告的 0.45%-0.52%。玩家操作精彩瞬间是低投入高回报的流量来源。<br><br>
+          <strong>预告节奏有效</strong>：本周 5/29→5/30→5/31 连续 3 天新英雄/皮肤预告，日曝光从 12.7K 逐日拉升至 20.2K，形成明确的内容脉冲。
+        </div>
+      </div>
+
+      <!-- Daily Trend -->
+      <div class="chart-box" data-memo-key="x-chart-daily">
+        <div class="chart-title">日次趋势对比（上周 vs 本周）</div>
+        <canvas id="xDailyChart" height="220"></canvas>
+      </div>
+
+      <!-- TOP 5 -->
+      <div class="chart-box" data-memo-key="x-top5">
+        <div class="chart-title">TOP5 帖子（按曝光量）</div>
+        <ul class="top-list">
+          <li class="top-item">
+            <div class="rank">1</div>
+            <div class="content">
+              <div class="title-text">⚡新ヒーロー4人が峡谷に降臨！⚔️</div>
+              <div class="meta">5/29 (Fri) · 新英雄预告 · 点赞 40 · 转发 48</div>
+            </div>
+            <div class="metric">8,804</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">2</div>
+            <div class="content">
+              <div class="title-text">⚡デーヴァラ、選ぶのはお前だ。6月17日登場！</div>
+              <div class="meta">5/30 (Sat) · Devara预告 · 点赞 38 · 转发 32</div>
+            </div>
+            <div class="metric">8,505</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">3</div>
+            <div class="content">
+              <div class="title-text">孔明のキル、息をのむほど鮮やか🔥</div>
+              <div class="meta">6/1 (Mon) · 精彩操作 · 点赞 43 · 转发 22</div>
+            </div>
+            <div class="metric">6,282</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">4</div>
+            <div class="content">
+              <div class="title-text">西より帰還。孫悟空スキン「無相」6月5日登場⏳</div>
+              <div class="meta">5/31 (Sun) · 皮肤预告 · 点赞 54 · 转发 16</div>
+            </div>
+            <div class="metric">5,304</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">5</div>
+            <div class="content">
+              <div class="title-text">上官婉児×孔明 デザインコンセプト公開✨</div>
+              <div class="meta">5/30 (Sat) · 设计概念 · 点赞 52 · 转发 13</div>
+            </div>
+            <div class="metric">4,124</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-grid">
+      </div>
+
+      <div class="source-label">数据来源：X Analytics（5/26-6/1 vs 5/20-5/25）</div>
+    </div>
+  </div>
+
+  <!-- ===== Discord ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#5865f2">D</div>
+      <h2>Discord</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card" data-memo-key="dc-total">
+          <div class="label">成员数</div>
+          <div class="value">~4,911</div>
+          <div class="change up">▲ +4 <small>vs 4,907</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="dc-msg">
+          <div class="label">消息数</div>
+          <div class="value">~246</div>
+          <div class="change down">▼ 86% <small>vs ~1,721</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="dc-rate">
+          <div class="label">发言率</div>
+          <div class="value">1.08%</div>
+          <div class="change down">▼ 64% <small>vs 3.02%</small></div>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card" data-memo-key="dc-why">
+          <span class="tag why">归因</span><br>
+          上周 Custom Party Vol.65 (5/23) 直播创造了脉冲：<strong>1,721 条消息 vs 本周 ~246 条</strong>，7x 差距完全由直播活动驱动。
+        </div>
+        <div class="analysis-card" data-memo-key="dc-signal">
+          <span class="tag signal">信号</span><br>
+          <strong>~246 条消息 ≠ 衰退</strong>，而是无活动周的「真实基线」。对比更早的无直播周（如 Vol.64 前一周 ~200 条），本周 246 实际处于正常区间上沿。
+        </div>
+      </div>
+
+      <div class="source-label">数据来源：Statbot（周汇总）· 注：本周为估算值</div>
+    </div>
+  </div>
+
+  <!-- ===== YouTube ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#ff0000">▶</div>
+      <h2>YouTube (Honor of Kings JP)</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card" data-memo-key="yt-uv">
+          <div class="label">独立观众</div>
+          <div class="value">1,337</div>
+          <div class="change up">▲ 14% <small>vs ~1,170</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="yt-views">
+          <div class="label">观看次数</div>
+          <div class="value">3,319</div>
+          <div class="change up">▲ 58% <small>vs ~2,106</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="yt-new">
+          <div class="label">新观众</div>
+          <div class="value">349</div>
+          <div class="change neutral">占比 26%</div>
+        </div>
+        <div class="kpi-card" data-memo-key="yt-sub">
+          <div class="label">订阅增长</div>
+          <div class="value">+8</div>
+          <div class="change up">▲ 700% <small>vs +1</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="yt-hours">
+          <div class="label">观看时长</div>
+          <div class="value">154.2h</div>
+          <div class="change neutral">—</div>
+        </div>
+        <div class="kpi-card" data-memo-key="yt-ctr">
+          <div class="label">展示点击率</div>
+          <div class="value">4.28%</div>
+          <div class="change neutral">—</div>
+        </div>
+      </div>
+
+      <!-- TOP Content -->
+      <div class="chart-box" data-memo-key="yt-top">
+        <div class="chart-title">TOP5 视频（按独立观众）</div>
+        <ul class="top-list">
+          <li class="top-item">
+            <div class="rank">1</div>
+            <div class="content">
+              <div class="title-text">HOK PLUS「オナオブ開発トーク」</div>
+              <div class="meta">5/25 · 长视频 · 观看 610 · 观看时长 44.1h · CTR高</div>
+            </div>
+            <div class="metric">453</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">2</div>
+            <div class="content">
+              <div class="title-text">あっさり危機回避…と思いきや、サプライズも。</div>
+              <div class="meta">5/27 · Shorts · 視聴 790 · 观看时长 3.7h</div>
+            </div>
+            <div class="metric">416</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">3</div>
+            <div class="content">
+              <div class="title-text">孫悟空スキン「無相」予告</div>
+              <div class="meta">5/31 · 長動画 3:21 · 視聴 108</div>
+            </div>
+            <div class="metric">99</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">4</div>
+            <div class="content">
+              <div class="title-text">西より帰還。混沌の世界へ、再び身を投じる！✨</div>
+              <div class="meta">5/31 · Shorts · 視聴 396</div>
+            </div>
+            <div class="metric">74</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">5</div>
+            <div class="content">
+              <div class="title-text">なんで当たらないんだこれ！？😠</div>
+              <div class="meta">5/31 · Shorts · 視聴 372</div>
+            </div>
+            <div class="metric">65</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card" data-memo-key="yt-driver">
+          <span class="tag key">核心驱动</span><br>
+          本周 YouTube 增长的<strong>唯一结构性因素是 HOK PLUS 开发对谈</strong>：<br>
+          · 单条贡献 <span class="num">453 独立观众</span>（占全周 34%）<br>
+          · 观看时长 <span class="num">44.1h</span>（占全周 154.2h 的 29%）<br>
+          · 订阅增长 +8 中预计 5-6 来自该视频<br><br>
+          这是典型的「深度内容 → 订阅转化」路径：人均观看 ~5.8 分钟，远高于 Shorts 的留存深度，转化效率更高。
+        </div>
+        <div class="analysis-card" data-memo-key="yt-shorts">
+          <span class="tag signal">Shorts 效率</span><br>
+          Shorts 播放 > 长视频（790 vs 610），但<strong>观看时长仅 3.7h vs 44.1h</strong>——<br>
+          Shorts 的「流量效率」是长视频的 1.3x，但「留存效率」仅 8%。<br><br>
+          <strong>结论</strong>：Shorts 负责拉新（26% 新观众），长视频负责转化（+8 订阅）。两者是互补而非替代关系。
+        </div>
+      </div>
+
+      <div class="source-label">数据来源：YouTube 频道分析（5/25-6/1）</div>
+    </div>
+  </div>
+
+  <!-- ===== TikTok ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#000">♪</div>
+      <h2>TikTok (@hok_jp)</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card" data-memo-key="tt-views">
+          <div class="label">播放量</div>
+          <div class="value">584</div>
+          <div class="change up">▲ 6,389% <small>vs 9</small></div>
+        </div>
+        <div class="kpi-card" data-memo-key="tt-profile">
+          <div class="label">主页访问</div>
+          <div class="value">6</div>
+          <div class="change neutral">vs 0</div>
+        </div>
+        <div class="kpi-card" data-memo-key="tt-likes">
+          <div class="label">获赞</div>
+          <div class="value">1</div>
+          <div class="change neutral">vs 0</div>
+        </div>
+        <div class="kpi-card" data-memo-key="tt-comments">
+          <div class="label">评论</div>
+          <div class="value">0</div>
+          <div class="change neutral">—</div>
+        </div>
+        <div class="kpi-card" data-memo-key="tt-shares">
+          <div class="label">分享</div>
+          <div class="value">0</div>
+          <div class="change neutral">—</div>
+        </div>
+        <div class="kpi-card" data-memo-key="tt-posts">
+          <div class="label">发帖数</div>
+          <div class="value">2</div>
+          <div class="change up">vs 1</div>
+        </div>
+      </div>
+
+      <!-- TOP Content -->
+      <div class="chart-box" data-memo-key="tt-top">
+        <div class="chart-title">本周发布（5/26-6/1）</div>
+        <ul class="top-list">
+          <li class="top-item">
+            <div class="rank">1</div>
+            <div class="content">
+              <div class="title-text">なんで当たらないんだこれ！？😠 #HOKJP #オナオブ</div>
+              <div class="meta">5/31 · 获赞 1 · 评论 0 · 分享 0</div>
+            </div>
+            <div class="metric">442 次播放</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">2</div>
+            <div class="content">
+              <div class="title-text">西より帰還。混沌の世界へ…✨ #HOKJP #オナオブ #孫悟空</div>
+              <div class="meta">5/31 · 获赞 1 · 评论 0 · 分享 0</div>
+            </div>
+            <div class="metric">370 次播放</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card" data-memo-key="tt-why">
+          <span class="tag why">现状诊断</span><br>
+          TikTok 仍处于<strong>极早期冷启动阶段</strong>：全周 584 播放中 516 来自 5/31 当天（88%），而 5/31 前 6 天合计仅 68 播放（日均 11）。<br><br>
+          <span class="num">1 获赞 / 584 播放 = 0.17% 互动率</span>，远低于 TikTok 游戏账号基准 2-5%。<strong>内容没有进入 For You 推荐流</strong>，流量几乎全部来自已有粉丝。
+        </div>
+
+      </div>
+
+      <div class="source-label">数据来源：TikTok 创作者中心（5/26-6/1）</div>
+    </div>
+  </div>
+
+  <!-- ===== 华人社区 ===== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#07c160">微</div>
+      <h2>华人社区</h2>
+    </div>
+    <div class="section-body">
+
+      <!-- 小红书 -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;width:16px;height:16px;background:#fe2c55;border-radius:4px;font-size:9px;color:#fff;text-align:center;line-height:16px">红</span>
+          小红书（王者荣耀日本朵朵_HOK）
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card" data-memo-key="xhs-expose">
+            <div class="label">曝光数</div>
+            <div class="value">89</div>
+            <div class="change down">▼ 29%</div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-views">
+            <div class="label">观看数</div>
+            <div class="value">13</div>
+            <div class="change down">▼ 43%</div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-eng">
+            <div class="label">互动数</div>
+            <div class="value">1</div>
+            <div class="change neutral">—</div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-followers-net">
+            <div class="label">净增粉丝</div>
+            <div class="value">-2</div>
+            <div class="change negative-up">▼ 200%<small>流失 2 人</small></div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-pv">
+            <div class="label">主页访客</div>
+            <div class="value">14</div>
+            <div class="change neutral">→ 0%</div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-posts">
+            <div class="label">发布笔记</div>
+            <div class="value">0</div>
+            <div class="change neutral">本周无发布</div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-total-fans">
+            <div class="label">总粉丝</div>
+            <div class="value">746</div>
+            <div class="change neutral">目标 1000</div>
+          </div>
+          <div class="kpi-card" data-memo-key="xhs-ctr">
+            <div class="label">封面点击率</div>
+            <div class="value">12.8%</div>
+            <div class="change down">▼ 24%</div>
+          </div>
+        </div>
+
+        <!-- XHS WoW Chart -->
+        <div class="chart-box" data-memo-key="xhs-chart">
+          <canvas id="xhsChart" height="160"></canvas>
+        </div>
+
+        <div class="analysis-grid" style="margin-top:16px">
+          <div class="analysis-card" data-memo-key="xhs-why">
+            <span class="tag why">归因</span><br>
+            本周<strong>发布数为 0</strong>，所有数据均为历史内容的自然衰减余量。89 次曝光 + 13 次观看全部来自旧笔记的搜索/推荐长尾流量。<br><br>
+            净流失 <span class="num">2 粉丝</span>（新增 0 / 取消关注 2）是连续不更新的直接结果——小红书的去重算法会持续清理长期无互动的关注关系。
+          </div>
+        </div>
+      </div>
+
+      <!-- 微信群 -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;width:16px;height:16px;background:#07c160;border-radius:4px;font-size:9px;color:#fff;text-align:center;line-height:16px">微</span>
+          微信群（HOK JP 华人社群）
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card" data-memo-key="wc-members">
+            <div class="label">成员数</div>
+            <div class="value">991</div>
+            <div class="change down">▼ 1<small> vs 992</small></div>
+          </div>
+          <div class="kpi-card" data-memo-key="wc-msgs">
+            <div class="label">发言条数</div>
+            <div class="value">49</div>
+            <div class="change down">▼ 45%<small> vs 89</small></div>
+          </div>
+          <div class="kpi-card" data-memo-key="wc-speakers">
+            <div class="label">发言人数</div>
+            <div class="value">20</div>
+            <div class="change down">▼ 26%<small> vs 27</small></div>
+          </div>
+          <div class="kpi-card" data-memo-key="wc-msgs-per-speaker">
+            <div class="label">人均发言</div>
+            <div class="value">2.45</div>
+            <div class="change down">▼ 26%<small> vs 3.30</small></div>
+          </div>
+        </div>
+
+        <div class="analysis-grid" style="margin-top:16px">
+          <div class="analysis-card" data-memo-key="wc-trend">
+            <span class="tag why">现状</span><br>
+            本周发言 49 条 / 20 人，人均 2.45 条。发言条数降幅（-45%）大于人数降幅（-26%），说明<strong>核心活跃用户仍在，只是发言频率降低</strong>——社群没有「散」，只是「静」了。
+          </div>
+        </div>
+
+        <div class="source-label">数据来源：企微助手（微信群统计周期 5/26-5/31）· 小红书创作者中心（统计周期 05-26 至 06-01）</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>HOK JP 社群周报 · Generated by WorkBuddy</footer>
+</div>
+
+<script>
+// ===== Chart.js: X Daily Trend (双周对比 + 内容标注) =====
+const ctxDaily = document.getElementById('xDailyChart').getContext('2d');
+
+// 每日内容摘要
+const dayContent = {
+  '5/19': '（无content数据）',
+  '5/20': '日常梗图 · 孫尚香/韓信新スキン概念公開',
+  '5/21': '投票第5回(ジャングラー) · ログインイベント告知',
+  '5/22': 'S15予告 · 孫尚香異世界天女スキン登場',
+  '5/23': '🎤Custom Party Vol.66 直播日 · HOK PLUS地図謎',
+  '5/24': '⚔️白龍スキン告知(8.4Kimp) · HOK PLUS実装告知',
+  '5/25': '孔明蒼霊仙客スキン · 巨人駆逐進捗85% · HOK PLUS先行公開',
+  '5/26': '—',
+  '5/27': 'プレイヤー投稿(Cleanさん) · 日常',
+  '5/28': '典韋金剛武神スキン · 日常帖4篇',
+  '5/29': '⚡新ヒーロー4体告知(8.9Kimp) · S15バージョン詳細',
+  '5/30': '⚡Devara告知(8.6Kimp) · 上官婉児×孔明デザインコンセプト',
+  '5/31': '孫悟空無相スキン告知 · S15情報まとめ',
+  '6/1':  '孔明精彩操作動画(6.7Kimp) · 日常帖2篇'
+};
+
+new Chart(ctxDaily, {
+  type: 'line',
+  data: {
+    labels: ['5/19','5/20','5/21','5/22','5/23','5/24','5/25', '5/26','5/27','5/28','5/29','5/30','5/31','6/1'],
+    datasets: [
+      {
+        label: '曝光量 (本周)',
+        data: [null,null,null,null,null,null,null, 9576,10527,12656,17177,20163,19969,13682],
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.08)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        borderWidth: 2,
+      },
+      {
+        label: '曝光量 (上周)',
+        data: [20988,19123,18872,14342,20452,29952,17662, null,null,null,null,null,null,null],
+        borderColor: '#3b82f6',
+        borderDash: [6, 4],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.3,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        borderWidth: 1.5,
+      },
+      {
+        label: '总互动 (本周)',
+        data: [null,null,null,null,null,null,null, 102,138,223,387,603,402,202],
+        borderColor: '#8b5cf6',
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.3,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        borderWidth: 2,
+      },
+      {
+        label: '总互动 (上周)',
+        data: [436,440,416,487,828,1577,351, null,null,null,null,null,null,null],
+        borderColor: '#8b5cf6',
+        borderDash: [6, 4],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.3,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        borderWidth: 1.5,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          font: { size: 10 },
+          boxWidth: 12,
+          padding: 12,
+          filter: item => !item.text.includes('(上周)') || true
+        }
+      },
+      tooltip: {
+        bodyFont: { size: 12 },
+        titleFont: { size: 12, weight: 'bold' },
+        padding: 12,
+        callbacks: {
+          title: items => `📅 ${items[0].label}`,
+          afterBody: items => {
+            const label = items[0].label;
+            const content = dayContent[label] || '';
+            if (!content || content === '—') return '';
+            return '📝 ' + content;
+          },
+          label: ctx => {
+            if (ctx.raw === null) return null;
+            return ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          font: { size: 10 },
+          callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'K' : v
+        },
+        grid: { color: '#f3f4f6' }
+      },
+      x: {
+        ticks: { font: { size: 9 } },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+// 注册周分界线插件
+Chart.register({
+  id: 'weekSeparator',
+  afterDraw(chart) {
+    const ctx = chart.ctx;
+    const xAxis = chart.scales.x;
+    const yAxis = chart.scales.y;
+    const x = xAxis.getPixelForValue(6.5);
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(156,163,175,0.4)';
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 1;
+    ctx.moveTo(x, yAxis.top);
+    ctx.lineTo(x, yAxis.bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+});
+
+// ===== Memo System =====
+const REPORT_PERIOD = '2026-05-26_2026-06-01';
+const STORAGE_KEY = `hok-jp-weekly-memos-v2-${REPORT_PERIOD}`;
+
+function loadMemos() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveMemos(memos) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(memos));
+}
+
+function initMemos() {
+  const memos = loadMemos();
+
+  document.querySelectorAll('[data-memo-key]').forEach(el => {
+    const key = el.getAttribute('data-memo-key');
+
+    const toggle = document.createElement('span');
+    toggle.className = 'memo-toggle' + (memos[key] ? ' has-memo' : '');
+    toggle.textContent = '✏';
+    toggle.title = '添加补充说明';
+    el.appendChild(toggle);
+
+    const box = document.createElement('div');
+    box.className = 'memo-box';
+    box.innerHTML = `<textarea placeholder="数据补充说明（自动保存）…">${memos[key] || ''}</textarea>`;
+    el.appendChild(box);
+
+    if (memos[key]) {
+      const preview = document.createElement('div');
+      preview.className = 'memo-preview';
+      preview.textContent = memos[key].substring(0, 80) + (memos[key].length > 80 ? '…' : '');
+      el.appendChild(preview);
+    }
+
+    toggle.addEventListener('click', e => {
+      e.stopPropagation();
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) {
+        box.querySelector('textarea').focus();
+      }
+    });
+
+    box.querySelector('textarea').addEventListener('blur', () => {
+      const val = box.querySelector('textarea').value.trim();
+      const m = loadMemos();
+      if (val) { m[key] = val; } else { delete m[key]; }
+      saveMemos(m);
+      toggle.className = 'memo-toggle' + (val ? ' has-memo' : '');
+      const existingPreview = el.querySelector('.memo-preview');
+      if (val) {
+        if (existingPreview) {
+          existingPreview.textContent = val.substring(0, 80) + (val.length > 80 ? '…' : '');
+        } else {
+          const p = document.createElement('div');
+          p.className = 'memo-preview';
+          p.textContent = val.substring(0, 80) + (val.length > 80 ? '…' : '');
+          el.appendChild(p);
+        }
+      } else if (existingPreview) {
+        existingPreview.remove();
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initMemos();
+  initCardEditor();
+});
+
+// ===== Card Editor System =====
+const CARD_STATE_KEY = `hok-jp-cards-v2-${REPORT_PERIOD}`;
+
+function loadCardStates() {
+  try { return JSON.parse(localStorage.getItem(CARD_STATE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveCardStates(states) {
+  localStorage.setItem(CARD_STATE_KEY, JSON.stringify(states));
+}
+
+function initCardEditor() {
+  const states = loadCardStates();
+
+  document.querySelectorAll('.analysis-card').forEach(card => {
+    const key = card.getAttribute('data-memo-key');
+
+    // Apply saved state
+    if (states[key]?.deleted) {
+      card.classList.add('deleted');
+    }
+    if (states[key]?.customContent) {
+      const bodyText = card.querySelector('.card-body-text');
+      if (bodyText) bodyText.innerHTML = states[key].customContent;
+    }
+
+    // Create toolbar
+    let toolbar = card.querySelector('.card-toolbar');
+    if (!toolbar) {
+      toolbar = document.createElement('div');
+      toolbar.className = 'card-toolbar';
+      toolbar.innerHTML = `
+        <button class="card-tool-btn card-edit-btn" title="编辑内容">✏</button>
+        <button class="card-tool-btn card-del-btn" title="删除卡片">🗑</button>
+      `;
+      card.appendChild(toolbar);
+    }
+
+    // Create edit area
+    let editArea = card.querySelector('.edit-area');
+    if (!editArea) {
+      editArea = document.createElement('div');
+      editArea.className = 'edit-area';
+      editArea.innerHTML = `
+        <textarea></textarea>
+        <div class="card-edit-actions">
+          <button class="btn-cancel">取消</button>
+          <button class="btn-save">保存</button>
+        </div>
+      `;
+      card.appendChild(editArea);
+    }
+
+    // Wrap existing content
+    const children = Array.from(card.childNodes);
+    let bodyText = card.querySelector('.card-body-text');
+    if (!bodyText) {
+      bodyText = document.createElement('div');
+      bodyText.className = 'card-body-text';
+      // Move all non-toolbar/non-edit-area nodes into bodyText
+      children.forEach(node => {
+        if (node !== toolbar && node !== editArea && node.nodeType === Node.ELEMENT_NODE ||
+            (node.nodeType === Node.TEXT_NODE && node.textContent.trim())) {
+          bodyText.appendChild(node.cloneNode(true));
+        }
+      });
+      // Clear and re-add in correct order
+      while (card.firstChild) card.removeChild(card.firstChild);
+      card.appendChild(bodyText);
+      card.appendChild(editArea);
+      card.appendChild(toolbar);
+    }
+
+    // Edit button handler
+    toolbar.querySelector('.card-edit-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      card.classList.add('editing');
+      const textArea = editArea.querySelector('textarea');
+      // Extract plain text from bodyText for editing
+      textArea.value = bodyText.innerText.trim();
+      textArea.focus();
+    });
+
+    // Delete button handler
+    toolbar.querySelector('.card-del-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      card.style.transition = 'opacity 0.2s, transform 0.2s';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        card.classList.add('deleted');
+        const s = loadCardStates();
+        s[key] = s[key] || {};
+        s[key].deleted = true;
+        saveCardStates(s);
+      }, 200);
+    });
+
+    // Save handler
+    editArea.querySelector('.btn-save').addEventListener('click', () => {
+      const val = editArea.querySelector('textarea').value.trim();
+      if (val) {
+        bodyText.innerHTML = val;
+        const s = loadCardStates();
+        s[key] = s[key] || {};
+        s[key].customContent = val;
+        if (s[key].deleted) delete s[key].deleted;
+        saveCardStates(s);
+      }
+      card.classList.remove('editing');
+    });
+
+    // Cancel handler
+    editArea.querySelector('.btn-cancel').addEventListener('click', () => {
+      card.classList.remove('editing');
+    });
+  });
+}
+
+// ===== Chart.js: 小红书 WoW =====
+const ctxXhs = document.getElementById('xhsChart');
+if (ctxXhs) {
+  new Chart(ctxXhs.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['曝光数', '观看数', '互动数', '净增粉丝', '主页访客'],
+      datasets: [
+        {
+          label: '本周',
+          data: [89, 13, 1, -2, 14],
+          backgroundColor: '#fe2c55',
+          borderRadius: 4,
+          barPercentage: 0.5,
+        },
+        {
+          label: '上周（估算）',
+          data: [125, 23, 2, 0, 14],
+          backgroundColor: '#e5e7eb',
+          borderRadius: 4,
+          barPercentage: 0.5,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position:'top', labels:{font:{size:10},boxWidth:10,padding:12} } },
+      scales: {
+        y: { beginAtZero:true, ticks:{font:{size:9}}, grid:{color:'#f3f4f6'} },
+        x: { ticks:{font:{size:9}}, grid:{display:false} }
+      }
+    }
+  });
+}
+
+</script>
+</body>
+</html>

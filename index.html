@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOK JP Community Weekly Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: transparent;
+    --text: #ffffff;
+    --text-secondary: rgba(255,255,255,0.8);
+    --text-muted: rgba(255,255,255,0.55);
+    --accent: #f5c542;
+    --accent-glow: rgba(245,197,66,0.25);
+    --accent-secondary: #60a5fa;
+    --card-bg: rgba(15, 15, 35, 0.55);
+    --card-bg-hover: rgba(20, 20, 45, 0.72);
+    --card-border: rgba(255,255,255,0.12);
+    --card-border-hover: rgba(245,197,66,0.5);
+    --radius: 16px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    /* Fallback: solid dark bg if image fails */
+    background-color: #0a0819;
+    /* Devāra hero art as full-page background */
+    background-image:
+      linear-gradient(
+        180deg,
+        rgba(10, 8, 25, 0.25) 0%,
+        rgba(10, 8, 25, 0.45) 40%,
+        rgba(10, 6, 20, 0.85) 75%,
+        rgba(6, 4, 16, 0.97) 100%
+      ),
+      url('assets/devara-bg.jpg');
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 72px 24px 36px;
+    max-width: 680px;
+  }
+  .hero h1 {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Week Cards Grid ── */
+  .weeks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+    max-width: 960px;
+    width: 100%;
+    padding: 0 24px 60px;
+  }
+
+  .week-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(.4,0,.2,1);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .week-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,197,66,0.06) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .week-card:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--card-border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 32px var(--accent-glow);
+  }
+  .week-card:hover::before { opacity: 1; }
+
+  .week-card .period {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .week-card .period span {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .week-card .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  .week-card.latest {
+    border-color: rgba(245,197,66,0.35);
+  }
+  .week-card.latest::after {
+    content: 'LATEST';
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #1a1330;
+    background: var(--accent);
+    padding: 3px 10px;
+    border-radius: 6px;
+    z-index: 2;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: auto;
+    padding: 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .hero { padding: 48px 16px 24px; }
+    .hero h1 { font-size: 26px; }
+    .weeks { padding: 0 16px 48px; grid-template-columns: 1fr; }
+    .week-card { padding: 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>HOK JP <span>Community Weekly Report</span></h1>
+  <p>王者荣耀国际服 日本社群运营周报<br>每周更新 · X · Discord · YouTube · TikTok · 华人社群</p>
+</div>
+
+<div class="weeks" id="weeksList"></div>
+
+<footer>HOK JP Community Operations · Powered by WorkBuddy</footer>
+
+<script>
+// 周报目录（手动维护，新增一周加一条即可）
+const weeks = [
+  {
+    dir: '20260526-20260601',
+    label: '5/26 — 6/1',
+    title: 'S15 预热期',
+    desc: ''
+  }
+  // 新增周报时复制一行，修改 dir / label / title / desc
+  // {
+  //   dir: '20260602-20260608',
+  //   label: '6/2 — 6/8',
+  //   title: 'S15 开赛首周',
+  //   desc: '...'
+  // }
+];
+
+const container = document.getElementById('weeksList');
+const latestIdx = 0;
+
+if (weeks.length === 0) {
+  container.innerHTML = '<div class="empty">暂无周报数据</div>';
+} else {
+  weeks.forEach((w, i) => {
+    const card = document.createElement('a');
+    card.href = `weeks/${w.dir}/index.html`;
+    card.className = 'week-card' + (i === latestIdx ? ' latest' : '');
+    card.innerHTML = `
+      <div class="period">${w.label} <span>${w.title}</span></div>
+      <div class="meta">${w.desc}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+</script>
+
+</body>
+</html>
