@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOK JP 社群週報 | 6/30 - 7/6</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-subtle: #f9fafb;
+    --border: #e5e7eb;
+    --border-light: #f3f4f6;
+    --text: #111827;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --accent-blue: #3b82f6;
+    --accent-red: #ef4444;
+    --accent-green: #16a34a;
+    --accent-amber: #f59e0b;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-subtle);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .week-nav a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .week-nav a:hover { text-decoration: underline; }
+  .week-nav-home { margin-right: auto; }
+  .week-nav-title {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .week-nav-prev, .week-nav-next { white-space: nowrap; }
+  .week-nav-next { color: var(--text-tertiary); }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  header { margin-bottom: 32px; }
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  header .period {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+  header .period span {
+    display: inline-block;
+    background: var(--border-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+    margin-left: 6px;
+  }
+
+  .section {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .platform-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .section-body { padding: 16px 20px 20px; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    padding: 12px 14px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    min-height: 88px;
+  }
+  .kpi-card .label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .kpi-card .value {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-card .change {
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .change.up { color: var(--accent-red); }
+  .change.down { color: var(--accent-green); }
+  .change.neutral { color: var(--text-tertiary); }
+
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .analysis-card {
+    padding: 14px 16px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+  .analysis-card.full-width { grid-column: 1 / -1; }
+  .analysis-card strong { color: var(--text); }
+  .analysis-card .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 4px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+  }
+  .tag.why { background: #fef3c7; color: #92400e; }
+  .tag.key { background: #fce7f3; color: #9d174d; }
+  .tag.signal { background: #e0e7ff; color: #3730a3; }
+  .tag.blank { background: #f3f4f6; color: #4b5563; }
+
+  .chart-box {
+    margin-top: 16px;
+    position: relative;
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .insight-image {
+    width: 100%;
+    display: block;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    background: var(--bg);
+  }
+
+  .top-list { list-style: none; }
+  .top-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+  }
+  .top-item:last-child { border-bottom: none; }
+  .rank {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .top-item:nth-child(1) .rank { background: #fef3c7; color: #92400e; }
+  .top-item:nth-child(2) .rank { background: #f3f4f6; color: #4b5563; }
+  .top-item:nth-child(3) .rank { background: #ffedd5; color: #9a3412; }
+  .top-item .content { flex: 1; min-width: 0; }
+  .title-text {
+    font-weight: 500;
+    color: var(--text);
+  }
+  .meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .metric {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  .source-label {
+    text-align: right;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    padding: 24px 0 0;
+  }
+
+  @media (max-width: 768px) {
+    .week-nav { gap: 10px; padding: 10px 16px; overflow-x: auto; }
+    .container { padding: 20px 16px 48px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .analysis-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<nav class="week-nav">
+  <a href="../../index.html" class="week-nav-home">周报首页</a>
+  <span class="week-nav-title">6/30 — 7/6 周报</span>
+  <a href="../20260617-20260623/index.html" class="week-nav-prev">← 上一周</a>
+  <span class="week-nav-next">下一周 →</span>
+</nav>
+
+<div class="container">
+  <header>
+    <h1>HOK JP 社群週報</h1>
+    <div class="period">报告周期 <span>6/30 - 7/6</span> · 环比基准 <span>6/23 - 6/29</span></div>
+  </header>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#000">X</div>
+      <h2>X (@hok_jp)</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">粉丝数变动</div>
+          <div class="value">-2</div>
+          <div class="change neutral">新增 68 / 取关 70</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">曝光量</div>
+          <div class="value">123.9K</div>
+          <div class="change down">▼ 3% <small>vs 127.3K</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">总互动</div>
+          <div class="value">1.4K</div>
+          <div class="change down">▼ 5% <small>vs 1.5K</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">互动率</div>
+          <div class="value">1.2%</div>
+          <div class="change neutral">持平 <small>vs 1.2%</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">发帖数</div>
+          <div class="value">29</div>
+          <div class="change up">▲ 5 <small>vs 24</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">平均单条曝光</div>
+          <div class="value">3,480</div>
+          <div class="change down">▼ 27% <small>vs 4,792</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">主页访问</div>
+          <div class="value">561</div>
+          <div class="change down">▼ 19% <small>vs 692</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">点赞</div>
+          <div class="value">664</div>
+          <div class="change up">▲ 14% <small>vs 582</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">转发</div>
+          <div class="value">122</div>
+          <div class="change down">▼ 12% <small>vs 139</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">回复</div>
+          <div class="value">10</div>
+          <div class="change down">▼ 33% <small>vs 15</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">收藏</div>
+          <div class="value">48</div>
+          <div class="change down">▼ 19% <small>vs 59</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">分享</div>
+          <div class="value">30</div>
+          <div class="change neutral">持平 <small>vs 30</small></div>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <span class="tag why">现状</span><br>
+          上周有「コスモ・キッチン」上线和冲高日相关高峰拉动，本周进入宣发中后段。总曝光为 <span class="num">123.9K</span>，仅小幅回落，但发帖数提升至 <span class="num">29</span> 条后，平均单条曝光下降至 <span class="num">3,480</span>，说明新增发布没有带来同等分发效率。
+        </div>
+        <div class="analysis-card">
+          <span class="tag signal">互动信号</span><br>
+          英雄调整与 Bug 修复内容互动表现最佳。7 月 2 日更新公告互动率达到 <span class="num">16.4%</span>，高互动主要来自详情点击 101 次和链接点击 85 次，说明玩家对英雄调整、数值变动等第一手信息有较强需求。
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title">曝光表现 Top3</div>
+        <ul class="top-list">
+          <li class="top-item">
+            <div class="rank">1</div>
+            <div class="content">
+              <div class="title-text">エリン新スキン「コスモ・キッチン」登場予告</div>
+              <div class="meta">皮肤系列 / 商业化内容</div>
+            </div>
+            <div class="metric">10,110</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">2</div>
+            <div class="content">
+              <div class="title-text">7月2日アップデートのお知らせ</div>
+              <div class="meta">英雄调整 & 修复公告</div>
+            </div>
+            <div class="metric">8,086</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">3</div>
+            <div class="content">
+              <div class="title-text">「あ、危ない！！！」</div>
+              <div class="meta">区域趣味短视频</div>
+            </div>
+            <div class="metric">7,544</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <span class="tag key">实用攻略</span><br>
+          区域自制内容「移動装備・靴」玩法解説互动率达 <span class="num">12.3%</span>，继续验证“对玩家有直接收益的内容更容易带动互动”的结论。
+        </div>
+        <div class="analysis-card">
+          <span class="tag key">皮肤系列</span><br>
+          「コスモ・キッチン」系列 12 帖平均曝光约 <span class="num">3,084</span>，低于本周均值 3,247，整体互动率 2.8%，表现弱于 AFO 套系。角色表现为艾琳（美术品质较佳，使用率 19 名）> 夏侯惇（使用率 18 名）> 莱西奥（使用率 24 名）。
+        </div>
+        <div class="analysis-card full-width">
+          <span class="tag signal">舆情</span><br>
+          犬夜叉联动内容引发小规模讨论。日本未上线犬夜叉联动，但端内大厅氛围、加载页仍出现相关内容，引起少量社群讨论，目前整体舆情可控。
+        </div>
+      </div>
+
+      <div class="source-label">数据来源：X Analytics（6/30-7/6）· 文档提炼版</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#5865f2">D</div>
+      <h2>Discord</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">成员数</div>
+          <div class="value">5,068</div>
+          <div class="change up">净增 +31</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">新加入</div>
+          <div class="value">70</div>
+          <div class="change neutral">vs 上周 112</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">退会人数</div>
+          <div class="value">39</div>
+          <div class="change neutral">自然流失</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">消息数</div>
+          <div class="value">423</div>
+          <div class="change down">▼ 59% <small>vs 1,036</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">发言人数</div>
+          <div class="value">93</div>
+          <div class="change down">▼ 35% <small>vs 143</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">人均消息</div>
+          <div class="value">4.55</div>
+          <div class="change down">vs 7.24</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">行动人数</div>
+          <div class="value">34.6</div>
+          <div class="change neutral">平均</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">消息人数</div>
+          <div class="value">21.4</div>
+          <div class="change neutral">平均</div>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <span class="tag why">增长</span><br>
+          本周服务器成员数达到 <span class="num">5,068</span> 人，新加入 70 人、退会 39 人，净增长 31 人。较上周カスパ活动集中拉新后的净增 76 人明显回落，但横向对比 5 月末至 6 月中旬常态周期（每周净增 4-14 人），本周仍处于较高水平。
+        </div>
+        <div class="analysis-card">
+          <span class="tag signal">活跃度</span><br>
+          社区互动回落主要来自上周活动高基数。剔除活动因素，与近期无活动周对比，本周 423 条消息 / 93 名发言者仍处于常态区间中等偏上水平；但发言人数缩水幅度小于消息数，说明本周讨论以浅层发言为主。
+        </div>
+        <div class="analysis-card full-width">
+          <span class="tag key">创作者内容</span><br>
+          随着入驻 Studio 和クリエイター支援的创作者增多，以及对创作者的持续引导，Discord 的视频/直播、二创频道投稿数量和密度都有所提升，几乎每天都有人发布内容。
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title">Discord 话题分布</div>
+        <img class="insight-image" src="../../assets/discord-topics-20260706.png" alt="Discord 话题分布图">
+      </div>
+
+      <div class="source-label">数据来源：Discord / Statbot（6/30-7/6）· 文档提炼版</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#ff0000">▶</div>
+      <h2>YouTube (Honor of Kings JP)</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">订阅增长</div>
+          <div class="value">+21</div>
+          <div class="change up">▲ 23.5%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">曝光量</div>
+          <div class="value">26,475</div>
+          <div class="change down">▼ 13%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">点击率</div>
+          <div class="value">4.36%</div>
+          <div class="change up">▲ 0.14pt</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">观看次数</div>
+          <div class="value">4,842</div>
+          <div class="change up">▲ 54.8%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">总观看时长</div>
+          <div class="value">75h</div>
+          <div class="change down">▼ 59%</div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title">本周表现最佳视频</div>
+        <ul class="top-list">
+          <li class="top-item">
+            <div class="rank">1</div>
+            <div class="content">
+              <div class="title-text">キラッとチャーム！</div>
+              <div class="meta">Shorts</div>
+            </div>
+            <div class="metric">1,293</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">2</div>
+            <div class="content">
+              <div class="title-text">あ、危ない！！！</div>
+              <div class="meta">Shorts · 平均观看率 79.6%</div>
+            </div>
+            <div class="metric">1,163</div>
+          </li>
+          <li class="top-item">
+            <div class="rank">3</div>
+            <div class="content">
+              <div class="title-text">『Honor of Kings』ヒーロースキン「エリン - コスモ・キッチン」予告</div>
+              <div class="meta">皮肤预告</div>
+            </div>
+            <div class="metric">439</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <span class="tag key">流量</span><br>
+          本周观看次数增长至 <span class="num">4,842</span> 次，较上周提升 54.8%；展示次数下降 13%，但点击率提升至 <span class="num">4.36%</span>，说明点击质量改善。
+        </div>
+        <div class="analysis-card">
+          <span class="tag signal">订阅</span><br>
+          订阅人数净增 <span class="num">+21</span>，较上周增长 23.5%。短视频内容对拉动观看和订阅仍有贡献，但总观看时长约 75 小时，较上周回落，说明本周增长主要来自短内容触达。
+        </div>
+      </div>
+
+      <div class="source-label">数据来源：YouTube Studio（6/30-7/6）· 文档提炼版</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#000">♪</div>
+      <h2>TikTok (@hok_jp)</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">观看次数</div>
+          <div class="value">380</div>
+          <div class="change down">▼ 83%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">观众总数</div>
+          <div class="value">291</div>
+          <div class="change down">▼ 85.2%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">新观众</div>
+          <div class="value">259</div>
+          <div class="change down">▼ 85.8%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">点赞</div>
+          <div class="value">1</div>
+          <div class="change neutral">评论 0 / 分享 0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">主页访问</div>
+          <div class="value">21</div>
+          <div class="change down">▼ 57.1%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">粉丝</div>
+          <div class="value">61</div>
+          <div class="change up">净增 +4</div>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card full-width">
+          <span class="tag blank">现状</span><br>
+          上周 TikTok 没有发布内容，账号整体数据回落。观看次数、观众总数和新观众均出现大幅下降，互动几乎归零；但粉丝仍净增 4 人，说明账号仍有少量长尾自然增长。
+        </div>
+      </div>
+
+      <div class="source-label">数据来源：TikTok Studio（6/30-7/6）· 文档提炼版</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="platform-icon" style="background:#07c160">中</div>
+      <h2>华人社区</h2>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">成员数</div>
+          <div class="value">979</div>
+          <div class="change neutral">规模稳定</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">发言条数</div>
+          <div class="value">67</div>
+          <div class="change down">▼ 11% <small>vs 75</small></div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">发言人数</div>
+          <div class="value">15</div>
+          <div class="change down">▼ 35% <small>vs 23</small></div>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <span class="tag why">现状</span><br>
+          群成员数为 <span class="num">979</span> 人，整体规模保持稳定。本周发言条数 67 条，较上周 75 条下降约 11%；发言人数 15 人，较上周 23 人下降约 35%，社区活跃度较上周继续小幅回落。
+        </div>
+        <div class="analysis-card">
+          <span class="tag signal">讨论主题</span><br>
+          本周群内发言主要以运营发布的游戏宣发内容及活动公告为主，玩家主动讨论较少，未形成明显的持续性讨论热点。
+        </div>
+      </div>
+
+      <div class="source-label">数据来源：企微助手（微信群统计周期 6/30-7/6）· 文档提炼版</div>
+    </div>
+  </div>
+
+  <footer>HOK JP 社群周报 · Generated by Codex</footer>
+</div>
+</body>
+</html>
